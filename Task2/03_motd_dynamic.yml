@@ -1,0 +1,17 @@
+---
+- name: Task 2 - Set motd with IP and hostname and a greeting
+  hosts: all
+  become: true
+  vars:
+    sysadmin_wish: "Хорошего дня, Повелитель!"
+  tasks:
+    - name: Set /etc/motd (dynamic)
+      ansible.builtin.copy:
+        dest: /etc/motd
+        content: |
+          Hostname: {{ ansible_hostname }}
+          IP: {{ ansible_default_ipv4.address | default('N/A') }}
+
+          {{ sysadmin_wish }}
+        owner: root
+        mode: "0644"
