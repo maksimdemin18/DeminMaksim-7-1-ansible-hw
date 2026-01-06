@@ -299,6 +299,7 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
 
 ## Задание 3-1
 [role](Task3/apache_facts_page_role/roles/apache_facts_page)
+
 site_role.yml [site_role.yml](Task3/apache_facts_page_role/roles/apache_facts_page/site_role.yml)
 
 ```
