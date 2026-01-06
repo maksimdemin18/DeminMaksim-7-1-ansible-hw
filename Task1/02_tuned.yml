@@ -1,0 +1,39 @@
+---
+- name: Task 1.2 Install tuned
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Enable Ubuntu Universe repository
+      ansible.builtin.apt_repository:
+        repo: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} {{ item }}"
+        state: present
+        filename: "ubuntu-universe"
+        update_cache: true
+      loop:
+        - "universe"
+        - "{{ ansible_distribution_release }}-updates universe"
+        - "{{ ansible_distribution_release }}-security universe"
+      when: ansible_facts.distribution == "Ubuntu"
+
+    - name: Update package cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_facts.os_family == "Debian"
+
+    - name: Update package cache (RHEL/Fedora/CentOS)
+      ansible.builtin.dnf:
+        update_cache: true
+      when: ansible_facts.os_family == "RedHat"
+
+    - name: Install tuned
+      ansible.builtin.package:
+        name: tuned
+        state: present
+
+    - name: Ensure tuned service is started and enabled
+      ansible.builtin.service:
+        name: tuned
+        state: started
+        enabled: true
