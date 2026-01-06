@@ -1,0 +1,43 @@
+---
+- name: Task 1.1 - Download and unpack Apache Kafka archive
+  hosts: all
+  become: true
+
+  vars:
+    kafka_version: "4.1.0"
+    scala_version: "2.13"
+
+    kafka_archive: "kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
+    archive_url: "https://downloads.apache.org/kafka/{{ kafka_version }}/{{ kafka_archive }}"
+
+    download_dir: "/tmp/ansible_downloads"
+    archive_path: "{{ download_dir }}/{{ kafka_archive }}"
+    extract_dir: "/opt/kafka_{{ scala_version }}-{{ kafka_version }}"
+
+  tasks:
+    - name: Ensure download directory exists
+      ansible.builtin.file:
+        path: "{{ download_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download Kafka archive from Apache official distribution
+      ansible.builtin.get_url:
+        url: "{{ archive_url }}"
+        dest: "{{ archive_path }}"
+        mode: "0644"
+
+    - name: Ensure extract directory exists
+      ansible.builtin.file:
+        path: "{{ extract_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Unpack archive into extract directory
+      ansible.builtin.unarchive:
+        src: "{{ archive_path }}"
+        dest: "{{ extract_dir }}"
+        remote_src: true
+        extra_opts:
+          - "--strip-components=1"
+
