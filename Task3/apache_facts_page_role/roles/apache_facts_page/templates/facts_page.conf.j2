@@ -1,0 +1,10 @@
+#Ansible role apache_facts_page
+
+{% if ansible_facts.os_family == 'RedHat' %}
+ServerTokens Prod
+ServerSignature Off
+{% else %}
+
+ServerTokens Prod
+ServerSignature Off
+{% endif %}
