@@ -35,50 +35,7 @@ ansible-vault create group_vars/all/vault.yml
 ## Задание 1-1
 
 [01_download_kafka.yml](Task1/01_download_kafka.yml)
-```
----
-- name: Task 1.1 - Download and unpack Apache Kafka archive
-  hosts: all
-  become: true
 
-  vars:
-    kafka_version: "4.1.0"
-    scala_version: "2.13"
-
-    kafka_archive: "kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
-    archive_url: "https://downloads.apache.org/kafka/{{ kafka_version }}/{{ kafka_archive }}"
-
-    download_dir: "/tmp/ansible_downloads"
-    archive_path: "{{ download_dir }}/{{ kafka_archive }}"
-    extract_dir: "/opt/kafka_{{ scala_version }}-{{ kafka_version }}"
-
-  tasks:
-    - name: Ensure download directory exists
-      ansible.builtin.file:
-        path: "{{ download_dir }}"
-        state: directory
-        mode: "0755"
-
-    - name: Download Kafka archive from Apache official distribution
-      ansible.builtin.get_url:
-        url: "{{ archive_url }}"
-        dest: "{{ archive_path }}"
-        mode: "0644"
-
-    - name: Ensure extract directory exists
-      ansible.builtin.file:
-        path: "{{ extract_dir }}"
-        state: directory
-        mode: "0755"
-
-    - name: Unpack archive into extract directory
-      ansible.builtin.unarchive:
-        src: "{{ archive_path }}"
-        dest: "{{ extract_dir }}"
-        remote_src: true
-        extra_opts:
-          - "--strip-components=1"
-```
 Выполняем в консоли 
 ```
 ansible-playbook -i inventory.ini 01_download_unpack.yml --ask-vault-pass
@@ -113,47 +70,7 @@ kafka                      : ok=5    changed=0    unreachable=0    failed=0    s
 ## Задание 1-2
 
  [02_tuned.yml](Task1/02_tuned.yml)
-```
----
-- name: Task 1.2 Install tuned
-  hosts: all
-  become: true
-
-  tasks:
-    - name: Enable Ubuntu Universe repository
-      ansible.builtin.apt_repository:
-        repo: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} {{ item }}"
-        state: present
-        filename: "ubuntu-universe"
-        update_cache: true
-      loop:
-        - "universe"
-        - "{{ ansible_distribution_release }}-updates universe"
-        - "{{ ansible_distribution_release }}-security universe"
-      when: ansible_facts.distribution == "Ubuntu"
-
-    - name: Update package cache (Debian/Ubuntu)
-      ansible.builtin.apt:
-        update_cache: true
-        cache_valid_time: 3600
-      when: ansible_facts.os_family == "Debian"
-
-    - name: Update package cache (RHEL/Fedora/CentOS)
-      ansible.builtin.dnf:
-        update_cache: true
-      when: ansible_facts.os_family == "RedHat"
-
-    - name: Install tuned
-      ansible.builtin.package:
-        name: tuned
-        state: present
-
-    - name: Ensure tuned service is started and enabled
-      ansible.builtin.service:
-        name: tuned
-        state: started
-        enabled: true
-```      
+    
 Выполняем в консоли 
 ```
 ansible-playbook -i inventory.ini 02_tuned.yml --ask-vault-pass
@@ -190,22 +107,7 @@ kafka                      : ok=5    changed=2    unreachable=0    failed=0    s
 ## Задание 1-3
 
 [03_motd.yml](Task1/03_motd.yml)
-```
----
-- name: Task 1.3 - Set custom motd
-  hosts: all
-  become: true
-  vars:
-    motd_message: "Салют! Все работает, шестеренки крутятся."
-  tasks:
-    - name: Set /etc/motd
-      ansible.builtin.copy:
-        dest: /etc/motd
-        content: "{{ motd_message }}\n"
-        owner: root
-        group: root
-        mode: "0644"
-```
+
 Выполняем в консоли 
 ```
 ansible-playbook -i inventory.ini 03_motd.yml --ask-vault-pass
@@ -237,25 +139,7 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
 ## Задание 2-1
 
 [03_motd_dynamic.yml](Task2/03_motd_dynamic.yml)
-```
----
-- name: Task 2 - Set motd with IP and hostname and a greeting
-  hosts: all
-  become: true
-  vars:
-    sysadmin_wish: "Хорошего дня, Повелитель!"
-  tasks:
-    - name: Set /etc/motd (dynamic)
-      ansible.builtin.copy:
-        dest: /etc/motd
-        content: |
-          Hostname: {{ ansible_hostname }}
-          IP: {{ ansible_default_ipv4.address | default('N/A') }}
 
-          {{ sysadmin_wish }}
-        owner: root
-        mode: "0644"
-```
 Выполняем в консоли 
 ```
 ansible-playbook -i inventory.ini 03_motd_dynamic.yml --ask-vault-pass
@@ -302,14 +186,6 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
 
 site_role.yml [site_role.yml](Task3/apache_facts_page_role/roles/apache_facts_page/site_role.yml)
 
-```
----
-- name: Task 3 - Install and configure Apache via a role
-  hosts: all
-  become: true
-  roles:
-    - apache_facts_page
-```
 ![photo_2026-01-05_18-13-00](https://github.com/user-attachments/assets/a04bf43b-91e5-4ad6-9b9c-3023c8a48c92)
 
 Выполняем в консоли
@@ -362,5 +238,6 @@ changed: [kafka]
 PLAY RECAP *********************************************************************
 kafka                      : ok=12   changed=6    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
 ```
+[role](Task3/apache_facts_page_role/roles/apache_facts_page)
 <img width="1258" height="535" alt="image_2026-01-05_17-50-46" src="https://github.com/user-attachments/assets/8b144747-95b6-42ed-80ce-969ab3b5a020" />
 
