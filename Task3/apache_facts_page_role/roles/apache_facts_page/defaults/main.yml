@@ -1,0 +1,5 @@
+---
+# Default значения для роли
+apache_listen_port: 80
+apache_docroot: /var/www/html
+apache_index: index.html
