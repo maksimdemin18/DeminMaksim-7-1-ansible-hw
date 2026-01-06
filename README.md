@@ -34,7 +34,7 @@ ansible-vault create group_vars/all/vault.yml
 
 ## Задание 1-1
 
-[01_download_kafka.yml](https://github.com/maksimdemin18/DeminMaksim-7-1-ansible-hw/blob/main/Task1/01_download_kafka.yml)
+[01_download_kafka.yml](Task1/01_download_kafka.yml)
 ```
 ---
 - name: Task 1.1 - Download and unpack Apache Kafka archive
@@ -189,7 +189,7 @@ kafka                      : ok=5    changed=2    unreachable=0    failed=0    s
 
 ## Задание 1-3
 
-03_motd.yml
+[03_motd.yml](Task1/03_motd.yml)
 ```
 ---
 - name: Task 1.3 - Set custom motd
@@ -236,7 +236,7 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
 
 ## Задание 2-1
 
-03_motd_dynamic.yml
+[03_motd_dynamic.yml](Task2/03_motd_dynamic.yml)
 ```
 ---
 - name: Task 2 - Set motd with IP and hostname and a greeting
@@ -298,8 +298,9 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
 # Решение 
 
 ## Задание 3-1
+[role](Task3/apache_facts_page_role/roles/apache_facts_page)
+site_role.yml [site_role.yml](Task3/apache_facts_page_role/roles/apache_facts_page/site_role.yml)
 
-site_role.yml
 ```
 ---
 - name: Task 3 - Install and configure Apache via a role
