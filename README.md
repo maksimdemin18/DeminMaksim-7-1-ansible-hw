@@ -2,7 +2,7 @@
 Создаени список хостов
 
 inventory.ini
-
+```
 [kafka]
 kafka ansible_host=213.21.15.199
 
@@ -10,10 +10,11 @@ kafka ansible_host=213.21.15.199
 ansible_port=5212
 ansible_user=maksim
 ansible_ssh_private_key_file=~/.ssh/id_rsa
-
+```
 И sudo-пароль в vault.yml
+```
 ansible-vault create group_vars/all/vault.yml
-
+```
 Задание 1
 Выполните действия, приложите файлы с плейбуками и вывод выполнения.
 
@@ -76,7 +77,9 @@ ansible-vault create group_vars/all/vault.yml
           - "--strip-components=1"
 ```
 Выполняем в консоли 
+```
 ansible-playbook -i inventory.ini 01_download_unpack.yml --ask-vault-pass
+```
 Результат 
 ```
 PLAY [Task 1.1 - Download and unpack Apache Kafka archive] *********************
@@ -148,7 +151,9 @@ kafka                      : ok=5    changed=0    unreachable=0    failed=0    s
         enabled: true
 ```      
 Выполняем в консоли 
+```
 ansible-playbook -i inventory.ini 02_tuned.yml --ask-vault-pass
+```
 Результат
 ```
 PLAY [Task 1.2 - Install tuned, start service, and enable at boot] *************
@@ -197,7 +202,9 @@ kafka                      : ok=5    changed=2    unreachable=0    failed=0    s
         mode: "0644"
 ```
 Выполняем в консоли 
+```
 ansible-playbook -i inventory.ini 03_motd.yml --ask-vault-pass
+```
 Результат
 ```
 PLAY [Task 1.3 - Set custom motd using a variable] *****************************
@@ -243,8 +250,9 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
         mode: "0644"
 ```
 Выполняем в консоли 
+```
 ansible-playbook -i inventory.ini 03_motd_dynamic.yml --ask-vault-pass
-
+```
 Результат
 ```
 PLAY [Task 2 - Set motd with IP, hostname and a greeting for sysadmin] *********
@@ -292,7 +300,10 @@ site_role.yml
 ![photo_2026-01-05_18-13-00](https://github.com/user-attachments/assets/a04bf43b-91e5-4ad6-9b9c-3023c8a48c92)
 
 Выполняем в консоли
+```
 ansible-playbook -i inventory.ini site_role.yml --ask-vault-pass
+```
+Результат
 ```
 PLAY [Task 3 - Deploy Apache using role and show host facts page] **************
 
