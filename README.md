@@ -12,7 +12,7 @@ ansible_user=maksim
 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 И sudo-пароль в vault.yml
-
+ansible-vault create group_vars/all/vault.yml
 
 Задание 1
 Выполните действия, приложите файлы с плейбуками и вывод выполнения.
@@ -31,6 +31,7 @@ ansible_ssh_private_key_file=~/.ssh/id_rsa
 Решение:
 Задание 1-1
 01_download_kafka.yml
+```
 ---
 - name: Task 1.1 - Download and unpack Apache Kafka archive
   hosts: all
@@ -73,11 +74,11 @@ ansible_ssh_private_key_file=~/.ssh/id_rsa
         remote_src: true
         extra_opts:
           - "--strip-components=1"
-
+```
 Выполняем в консоли 
 ansible-playbook -i inventory.ini 01_download_unpack.yml --ask-vault-pass
 Результат 
-
+```
 PLAY [Task 1.1 - Download and unpack Apache Kafka archive] *********************
 
 TASK [Gathering Facts] *********************************************************
@@ -96,13 +97,16 @@ TASK [Unpack archive into extract directory] ***********************************
 ok: [kafka]
 
 PLAY RECAP *********************************************************************
-kafka                      : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+kafka                      : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+```  
 
 <img width="1174" height="1601" alt="image_2026-01-05_17-17-10" src="https://github.com/user-attachments/assets/d676d04f-dbd2-4086-854d-0feef9ac686c" />
 
 
 Задание 1-2
 02_tuned.yml
+```
 ---
 - name: Task 1.2 Install tuned
   hosts: all
@@ -142,11 +146,11 @@ kafka                      : ok=5    changed=0    unreachable=0    failed=0    s
         name: tuned
         state: started
         enabled: true
-      
+```      
 Выполняем в консоли 
 ansible-playbook -i inventory.ini 02_tuned.yml --ask-vault-pass
 Результат
-
+```
 PLAY [Task 1.2 - Install tuned, start service, and enable at boot] *************
 
 TASK [Gathering Facts] *********************************************************
@@ -172,10 +176,11 @@ ok: [kafka]
 PLAY RECAP *********************************************************************
 kafka                      : ok=5    changed=2    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0  
 
-
+```
 
 Задание 1-3
 03_motd.yml
+```
 ---
 - name: Task 1.3 - Set custom motd
   hosts: all
@@ -190,11 +195,11 @@ kafka                      : ok=5    changed=2    unreachable=0    failed=0    s
         owner: root
         group: root
         mode: "0644"
-
+```
 Выполняем в консоли 
 ansible-playbook -i inventory.ini 03_motd.yml --ask-vault-pass
 Результат
-
+```
 PLAY [Task 1.3 - Set custom motd using a variable] *****************************
 
 TASK [Gathering Facts] *********************************************************
@@ -205,7 +210,7 @@ changed: [kafka]
 
 PLAY RECAP *********************************************************************
 kafka                      : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-
+```
 <img width="1208" height="666" alt="image_2026-01-05_17-13-41" src="https://github.com/user-attachments/assets/b9436a4a-b613-4099-af5d-d206fdad468d" />
 
 
@@ -218,6 +223,7 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
 Задание 2-1
 
 03_motd_dynamic.yml
+```
 ---
 - name: Task 2 - Set motd with IP and hostname and a greeting
   hosts: all
@@ -235,12 +241,12 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
           {{ sysadmin_wish }}
         owner: root
         mode: "0644"
-
+```
 Выполняем в консоли 
 ansible-playbook -i inventory.ini 03_motd_dynamic.yml --ask-vault-pass
 
 Результат
-
+```
 PLAY [Task 2 - Set motd with IP, hostname and a greeting for sysadmin] *********
 
 TASK [Gathering Facts] *********************************************************
@@ -251,7 +257,7 @@ changed: [kafka]
 
 PLAY RECAP *********************************************************************
 kafka                      : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-
+```
 <img width="1193" height="717" alt="image_2026-01-05_17-14-20" src="https://github.com/user-attachments/assets/f165e16a-7910-43c7-9bed-5559fd11c4a4" />
 
 
@@ -275,17 +281,19 @@ kafka                      : ok=2    changed=1    unreachable=0    failed=0    s
 
 Решение Задание 3-1
 site_role.yml
+```
 ---
 - name: Task 3 - Install and configure Apache via a role
   hosts: all
   become: true
   roles:
     - apache_facts_page
-
+```
 ![photo_2026-01-05_18-13-00](https://github.com/user-attachments/assets/a04bf43b-91e5-4ad6-9b9c-3023c8a48c92)
 
 Выполняем в консоли
 ansible-playbook -i inventory.ini site_role.yml --ask-vault-pass
+```
 PLAY [Task 3 - Deploy Apache using role and show host facts page] **************
 
 TASK [Gathering Facts] *********************************************************
@@ -329,6 +337,6 @@ changed: [kafka]
 
 PLAY RECAP *********************************************************************
 kafka                      : ok=12   changed=6    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
-
+```
 <img width="1258" height="535" alt="image_2026-01-05_17-50-46" src="https://github.com/user-attachments/assets/8b144747-95b6-42ed-80ce-969ab3b5a020" />
 
