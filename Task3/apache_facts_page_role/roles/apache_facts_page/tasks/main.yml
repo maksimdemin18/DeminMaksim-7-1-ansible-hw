@@ -1,0 +1,81 @@
+---
+- name: Set Apache by OS family
+  ansible.builtin.set_fact:
+    apache_package_name: "{{ 'httpd' if ansible_facts.os_family == 'RedHat' else 'apache2' }}"
+    apache_service_name: "{{ 'httpd' if ansible_facts.os_family == 'RedHat' else 'apache2' }}"
+    apache_conf_dropin_path: "{{ '/etc/httpd/conf.d/facts_page.conf' if ansible_facts.os_family == 'RedHat' else '/etc/apache2/conf-available/facts_page.conf' }}"
+    apache_conf_enabled_link: "{{ '/etc/apache2/conf-enabled/facts_page.conf' }}"
+
+- name: Install Apache
+  ansible.builtin.package:
+    name: "{{ apache_package_name }}"
+    state: present
+
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Open TCP/80 in firewalld
+  when:
+    - "'firewalld.service' in ansible_facts.services"
+  ansible.posix.firewalld:
+    port: "{{ apache_listen_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Open TCP/80 in UFW
+  when:
+    - "'ufw.service' in ansible_facts.services"
+  community.general.ufw:
+    rule: allow
+    port: "{{ apache_listen_port }}"
+    proto: tcp
+
+- name: Ensure Apache is enabled and started
+  ansible.builtin.service:
+    name: "{{ apache_service_name }}"
+    state: started
+    enabled: true
+
+- name: Size primary disk from ansible_devices
+  ansible.builtin.set_fact:
+    primary_disk: >-
+      {{
+        (ansible_facts.devices | default(ansible_devices) | default({}))
+        | dict2items
+        | selectattr('key', 'match', '^(sd|vd|nvme)')
+        | sort(attribute='key')
+        | first
+        | default({'key': 'N/A', 'value': {'size': 'N/A'}})
+      }}
+    primary_disk_size: "{{ primary_disk.value.size | default('N/A') }}"
+
+- name: Deploy Apache config drop-in
+  ansible.builtin.template:
+    src: facts_page.conf.j2
+    dest: "{{ apache_conf_dropin_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Apache
+
+- name: Enable config on Debian conf-available -> conf-enabled
+  when: ansible_facts.os_family == 'Debian'
+  ansible.builtin.file:
+    src: "{{ apache_conf_dropin_path }}"
+    dest: "{{ apache_conf_enabled_link }}"
+    state: link
+  notify: Restart Apache
+
+- name: Deploy index.html
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: "{{ apache_docroot }}/{{ apache_index }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Verify website is reachable locally 200
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ apache_listen_port }}/"
+    status_code: 200
