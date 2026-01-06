@@ -34,7 +34,7 @@ ansible-vault create group_vars/all/vault.yml
 
 ## Задание 1-1
 
-01_download_kafka.yml https://github.com/maksimdemin18/DeminMaksim-7-1-ansible-hw/blob/main/Task1/01_download_kafka.yml [01_download_kafka.yml](https://github.com/maksimdemin18/DeminMaksim-7-1-ansible-hw/blob/main/Task1/01_download_kafka.yml)
+[01_download_kafka.yml](https://github.com/maksimdemin18/DeminMaksim-7-1-ansible-hw/blob/main/Task1/01_download_kafka.yml)
 ```
 ---
 - name: Task 1.1 - Download and unpack Apache Kafka archive
@@ -112,7 +112,7 @@ kafka                      : ok=5    changed=0    unreachable=0    failed=0    s
 
 ## Задание 1-2
 
-02_tuned.yml
+ [02_tuned.yml](Task1/02_tuned.yml)
 ```
 ---
 - name: Task 1.2 Install tuned
