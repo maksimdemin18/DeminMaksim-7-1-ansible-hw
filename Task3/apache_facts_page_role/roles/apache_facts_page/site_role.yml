@@ -1,0 +1,8 @@
+---
+- name: Task 3 - Deploy Apache using role and show host facts page
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - apache_facts_page
